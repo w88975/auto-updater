@@ -1,0 +1,30 @@
+{
+    "name": "checkupdate",
+    "version": "0.1.0",
+    "description": "The checkupdate plugin for Fireball Editor",
+    "author": "KamiSama <1457434343@qq.com>",
+    "fireball": {
+        "main": "editor/main.js",
+        "menus": [
+            {
+                "path": "Fireball/Check Update",
+                "message": "check-update:open"
+            }
+        ],
+        "panels": {
+            "default": {
+                "type": "fixed-size",
+                "view": "editor/check-update.html",
+                "ctor": "CheckUpdate",
+                "title": "checkupdate",
+                "width": 400,
+                "height": 400,
+                "min-width": 400,
+                "min-height": 150,
+                "messages": {
+                    "auto-updater:status-changed": "status-changed"
+                }
+            }
+        }
+    }
+}
