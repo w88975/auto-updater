@@ -16,9 +16,9 @@
                 "type": "fixed-size",
                 "view": "editor/check-update.html",
                 "ctor": "CheckUpdate",
-                "title": "checkupdate",
+                "title": "CheckUpdate",
                 "width": 400,
-                "height": 400,
+                "height": 120,
                 "min-width": 400,
                 "min-height": 150,
                 "messages": {

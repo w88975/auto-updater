@@ -5,45 +5,102 @@ var autoUpdater = Remote.require('auto-updater');
 Polymer({
     version: '',
     playAnimate: false,
+    status: "normal",
+    progressAnimate: false,
+    statusTip: "",
+    ignoreDialog: false,
+    winUpdate: false,
+    updateUrl: "",
+
     created: function () {
         this.version = app.getVersion();
     },
 
     domReady: function () {
-        console.log('status = ' + this.argv.status);
+        this.status = this.argv.status;
+        this.ignoreDialog = this.argv.ignoreDialog;
+        if (Fire.isDarwin) {
+            this.windowsCheckUpdate();
+        }else {
+            if (this.status === "normal") {
+                this.darwinCheckUpdate();
+            }
+        }
     },
 
-    checkUpdate: function () {
+    statusChanged: function () {
+        if (this.status === "checking") {
+            this.playAnimate = true;
+            this.statusTip = "Checking for update...";
+        }
+        else if (this.status === "not-available") {
+            this.progressAnimate = true;
+            this.playAnimate = false;
+            this.statusTip = "Update not available...";
+        }
+        else if (this.status === "downloading") {
+            this.progressAnimate = true;
+            this.statusTip = "Downloading... (You can close this window)";
+        }
+        else if (this.status === "error") {
+            this.playAnimate = false;
+            this.statusTip = "Error: install faild,please quite and check update again!";
+        }
+        else if (this.status === "downloaded") {
+            this.playAnimate = false;
+            this.statusTip = "Download success,ready to install...";
+            if (!this.ignoreDialog) {
+                var dialog = Remote.require('dialog');
+                var result = dialog.showMessageBox( Remote.getCurrentWindow(), {
+                    type: "warning",
+                    buttons: ["Quite and install now","Later"],
+                    title: "Install Update",
+                    message: "install update now?",
+                    detail: "If you choose \"Later\", Fireball will update itself after you quit the app."
+                } );
+
+                if (result === 0) {
+                    autoUpdater.quitAndInstall();
+                }
+                else if (result === 1) {
+                    //TODO: 发IPC给MainWindow,让MainWindow在关闭的时候调用autoUpdater.quitAndInstall();
+                }
+            }
+        }
+    },
+
+    darwinCheckUpdate: function () {
         Fire.sendToCore( 'auto-update:start');
-        // this.animation();
-        //
-        // autoUpdater.checkForUpdates();
-        // autoUpdater
-        //   .on('checking-for-update', function() {
-        //       Fire.log("Checking for update! Now Version:" + this.version);
-        //   }.bind(this))
-        //   .on('update-available', function(notes) {
-        //       console.log('正在自动下载最新版本!');
-        //   })
-        //   .on('update-not-available', function() {
-        //       Fire.log('当前已经是最新版本!');
-        //   })
-        //   .on('update-downloaded', function() {
-        //       Fire.log('更新完成，是否需要重启客户端完成安装?');
-        //   })
-        //   .on('error', function () {
-        //       Fire.error(arguments[1]);
-        //   });
+        this.animation();
+    },
+
+    windowsCheckUpdate: function () {
+        this.animation();
+        Fire._JsonLoader('http://localhost:3000/checkupdate?version='+ app.getVersion(), function (err,json) {
+            this.progressAnimate = true;
+            Fire.log("Checking for update!");
+            this.statusTip = "Checking for update...";
+            if (err) {
+                this.statusTip = "Update not available...";
+                Fire.error("Update not available...");
+                this.progressAnimate = false;
+            }
+            else {
+                this.statusTip = "New version for update!";
+                Fire.info("New version for update! You should open this url to download: '"
+                        +json.url+"'");
+                this.winUpdate = true;
+                this.updateUrl = json.url
+            }
+        }.bind(this));
     },
 
     ipcStatusChanged: function ( event ) {
-        var status = event.detail.status;
-
-        console.log( "status changed = " + status );
+        this.status = event.detail.status;
+        this.ignoreDialog = event.detail.ignoreDialog;
     },
 
     animation: function () {
-        this.$.svgForStroke.style.display = "block";
         this.playAnimate = true;
         this.$.logo.animate([
             { width: "45px" },
@@ -57,5 +114,10 @@ Polymer({
 
     install: function () {
         autoUpdater.quitAndInstall();
+    },
+
+    goUpdateUrl: function () {
+        var shell = Remote.require('shell');
+        shell.openExternal(this.updateUrl);
     },
 });
