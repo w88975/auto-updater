@@ -19,7 +19,7 @@ Polymer({
     domReady: function () {
         this.status = this.argv.status;
         this.ignoreDialog = this.argv.ignoreDialog;
-        if (Fire.isDarwin) {
+        if (!Fire.isDarwin) {
             this.windowsCheckUpdate();
         }else {
             if (this.status === "normal") {
