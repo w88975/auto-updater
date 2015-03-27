@@ -76,13 +76,13 @@ Polymer({
 
     windowsCheckUpdate: function () {
         this.animation();
-        Fire._JsonLoader('http://localhost:3000/checkupdate?version='+ app.getVersion(), function (err,json) {
+        Fire._JsonLoader('http://fireball-x.com/api/checkupdate?version=v'+ app.getVersion(), function (err,json) {        
             this.progressAnimate = true;
             Fire.log("Checking for update!");
             this.statusTip = "Checking for update...";
             if (err) {
                 this.statusTip = "Update not available...";
-                Fire.error("Update not available...");
+                Fire.warn("Update not available...");
                 this.progressAnimate = false;
             }
             else {
@@ -90,7 +90,7 @@ Polymer({
                 Fire.info("New version for update! You should open this url to download: '"
                         +json.url+"'");
                 this.winUpdate = true;
-                this.updateUrl = json.url
+                this.updateUrl = json.winurl;
             }
         }.bind(this));
     },

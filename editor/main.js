@@ -13,7 +13,8 @@ module.exports = {
             });
         });
         Fire.log(Fire.isDarwin);
-        autoUpdater.setFeedUrl('http://localhost:3000/checkupdate?version=' + app.getVersion());
+        autoUpdater.setFeedUrl('http://fireball-x.com/api/checkupdate?version=v' + app.getVersion());
+        // autoUpdater.setFeedUrl('http://192.168.1.145:3000/api/updatetest?version=v' + "0.1.4"); //test
         autoUpdater
           .on('checking-for-update', function() {
               status = 'checking';
