@@ -5,7 +5,7 @@ var status = 'normal';
 var ignoreDialog = false;
 module.exports = {
     load: function (plugin) {
-        plugin.on('check-update:open', function () {
+        plugin.on('auto-update:open', function () {
             ignoreDialog = false;
             plugin.openPanel('default', {
                 status: status,

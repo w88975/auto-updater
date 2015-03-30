@@ -1,10 +1,10 @@
 <polymer-element
-    name="check-update"
-    constructor="CheckUpdate"
+    name="auto-updater"
+    constructor="AutoUpdater"
     on-status-changed="ipcStatusChanged"
     >
 <template>
-<link rel="stylesheet" href="check-update.css">
+<link rel="stylesheet" href="auto-updater.css">
     <div class="pace  pace-inactive" style="display: {{progressAnimate ? 'block':'none'}}">
         <div class="progress"></div>
         <div class="pace-activity"></div>
@@ -25,5 +25,5 @@
         <span class="version">version:{{version}}</span>
     </div>
 </template>
-<script type="text/javascript" src="check-update.js"></script>
+<script type="text/javascript" src="auto-updater.js"></script>
 </polymer-element>

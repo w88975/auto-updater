@@ -8,18 +8,19 @@
         "menus": [
             {
                 "path": "Fireball/Check Update",
-                "message": "check-update:open"
+                "message": "auto-update:open"
             }
         ],
         "panels": {
             "default": {
                 "type": "fixed-size",
-                "view": "editor/check-update.html",
-                "ctor": "CheckUpdate",
-                "title": "CheckUpdate",
+                "view": "editor/auto-updater.html",
+                "ctor": "AutoUpdater",
+                "title": "AutoUpdater",
                 "width": 400,
-                "height": 120,
+                "height": 100,
                 "min-width": 400,
+                "min-height": 100,
                 "messages": {
                     "auto-updater:status-changed": "status-changed"
                 }
