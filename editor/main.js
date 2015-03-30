@@ -6,15 +6,13 @@ var ignoreDialog = false;
 module.exports = {
     load: function (plugin) {
         plugin.on('check-update:open', function () {
-            var ignoreDialog = false;
+            ignoreDialog = false;
             plugin.openPanel('default', {
                 status: status,
                 ignoreDialog: ignoreDialog
             });
         });
-        Fire.log(Fire.isDarwin);
         autoUpdater.setFeedUrl('http://fireball-x.com/api/checkupdate?version=v' + app.getVersion());
-        // autoUpdater.setFeedUrl('http://192.168.1.145:3000/api/updatetest?version=v' + "0.1.4"); //test
         autoUpdater
           .on('checking-for-update', function() {
               status = 'checking';
@@ -57,10 +55,6 @@ module.exports = {
                   //TODO: 发IPC给MainWindow,让MainWindow在关闭的时候调用autoUpdater.quitAndInstall();
               }
               ignoreDialog = true;
-            //   plugin.openPanel('default', {
-            //       status: status,
-            //       ignoreDialog: ignoreDialog
-            //   });
 
               plugin.sendToPanel('default', 'auto-updater:status-changed', {
                   status: status,
@@ -82,7 +76,7 @@ module.exports = {
             autoUpdater.checkForUpdates();
         });
 
-        plugin.on('auto-update:ignoreDialog', function () {
+        plugin.on('auto-update:ignore-dialog', function () {
             ignoreDialog = true;
         });
     },

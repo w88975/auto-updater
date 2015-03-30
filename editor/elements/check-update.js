@@ -21,7 +21,8 @@ Polymer({
         this.ignoreDialog = this.argv.ignoreDialog;
         if (!Fire.isDarwin) {
             this.windowsCheckUpdate();
-        }else {
+        }
+        else {
             if (this.status === "normal") {
                 this.darwinCheckUpdate();
             }
@@ -76,7 +77,7 @@ Polymer({
 
     windowsCheckUpdate: function () {
         this.animation();
-        Fire._JsonLoader('http://fireball-x.com/api/checkupdate?version=v'+ app.getVersion(), function (err,json) {        
+        Fire._JsonLoader('http://fireball-x.com/api/checkupdate?version=v'+ app.getVersion(), function (err,json) {
             this.progressAnimate = true;
             Fire.log("Checking for update!");
             this.statusTip = "Checking for update...";
@@ -87,8 +88,7 @@ Polymer({
             }
             else {
                 this.statusTip = "New version for update!";
-                Fire.info("New version for update! You should open this url to download: '"
-                        +json.url+"'");
+                Fire.info("New version for update! You should open this url to download: '" + json.url + "'");
                 this.winUpdate = true;
                 this.updateUrl = json.winurl;
             }
