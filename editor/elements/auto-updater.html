@@ -10,12 +10,12 @@
         <div class="pace-activity"></div>
     </div>
     <span class="tip">{{statusTip}}
-        <span class="updateurl" on-click="{{goUpdateUrl}}" style="{{winUpdate ? '':'display:none'}}"> ➤ Click to Download</span>
+        <span class="updateurl" on-click="{{goToUpdateUrl}}" style="{{winUpdate ? '':'display:none'}}"> ➤ Click to Download</span>
     </span>
     <div class="topbar">
         <div class="load">
             <img class="logo" id="logo" src="img/logo.png">
-            <svg id="svgForStroke" class="{{playAnimate ? 'showAnimate':''}}" style="display: {{playAnimate ? 'block':'none'}}" xmlns="http://www.w3.org/2000/svg">
+            <svg id="svgForStroke" class="{{playing ? 'showAnimate':''}}" style="display: {{playAnimate ? 'block':'none'}}" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="50%" cy="50%" r="40%" stroke-width="1%"/>
             </svg>
         </div>

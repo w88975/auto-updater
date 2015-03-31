@@ -5,7 +5,7 @@ var status = 'normal';
 var ignoreDialog = false;
 module.exports = {
     load: function (plugin) {
-        plugin.on('auto-update:open', function () {
+        plugin.on('auto-updater:open', function () {
             ignoreDialog = false;
             plugin.openPanel('default', {
                 status: status,
@@ -72,11 +72,11 @@ module.exports = {
               });
           });
 
-        plugin.on('auto-update:start', function () {
+        plugin.on('auto-updater:start', function () {
             autoUpdater.checkForUpdates();
         });
 
-        plugin.on('auto-update:ignore-dialog', function () {
+        plugin.on('auto-updater:ignore-dialog', function () {
             ignoreDialog = true;
         });
     },

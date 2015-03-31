@@ -1,10 +1,10 @@
 var Remote = require('remote');
-var app = Remote.require('app');
-var autoUpdater = Remote.require('auto-updater');
+var App = Remote.require('app');
+var AutoUpdater = Remote.require('auto-updater');
 
 Polymer({
     version: '',
-    playAnimate: false,
+    playing: false,
     status: "normal",
     progressAnimate: false,
     statusTip: "",
@@ -13,7 +13,7 @@ Polymer({
     updateUrl: "",
 
     created: function () {
-        this.version = app.getVersion();
+        this.version = App.getVersion();
     },
 
     domReady: function () {
@@ -30,53 +30,59 @@ Polymer({
     },
 
     statusChanged: function () {
-        if (this.status === "checking") {
-            this.playAnimate = true;
-            this.statusTip = "Checking for update...";
-        }
-        else if (this.status === "not-available") {
-            this.progressAnimate = true;
-            this.playAnimate = false;
-            this.statusTip = "Update not available...";
-        }
-        else if (this.status === "downloading") {
-            this.progressAnimate = true;
-            this.statusTip = "Downloading... (You can close this window)";
-        }
-        else if (this.status === "error") {
-            this.playAnimate = false;
-            this.statusTip = "Error: install faild,please quite and check update again!";
-        }
-        else if (this.status === "downloaded") {
-            this.playAnimate = false;
-            this.statusTip = "Download success,ready to install...";
-            if (!this.ignoreDialog) {
-                var dialog = Remote.require('dialog');
-                var result = dialog.showMessageBox( Remote.getCurrentWindow(), {
-                    type: "warning",
-                    buttons: ["Quite and install now","Later"],
-                    title: "Install Update",
-                    message: "install update now?",
-                    detail: "If you choose \"Later\", Fireball will update itself after you quit the app."
-                } );
+        switch( this.status ) {
+            case "checking":
+                this.playing = true;
+                this.statusTip = "Checking for update...";
+                break;
 
-                if (result === 0) {
-                    autoUpdater.quitAndInstall();
+            case "not-available":
+                this.progressAnimate = true;
+                this.playing = false;
+                this.statusTip = "Update not available...";
+                break;
+
+            case "downloading":
+                this.progressAnimate = true;
+                this.statusTip = "Downloading... (You can close this window)";
+                break;
+
+            case "error":
+                this.playing = false;
+                this.statusTip = "Error: install faild,please quite and check update again!";
+                break;
+
+            case "downloaded":
+                this.playing = false;
+                this.statusTip = "Download success,ready to install...";
+                if (!this.ignoreDialog) {
+                    var dialog = Remote.require('dialog');
+                    var result = dialog.showMessageBox( Remote.getCurrentWindow(), {
+                        type: "warning",
+                        buttons: ["Quite and install now","Later"],
+                        title: "Install Update",
+                        message: "install update now?",
+                        detail: "If you choose \"Later\", Fireball will update itself after you quit the app."
+                    } );
+
+                    if (result === 0) {
+                        AutoUpdater.quitAndInstall();
+                    }
+                    else if (result === 1) {
+                        //TODO: 发IPC给MainWindow,让MainWindow在关闭的时候调用autoUpdater.quitAndInstall();
+                    }
                 }
-                else if (result === 1) {
-                    //TODO: 发IPC给MainWindow,让MainWindow在关闭的时候调用autoUpdater.quitAndInstall();
-                }
-            }
+                break;
         }
     },
 
     darwinCheckUpdate: function () {
-        Fire.sendToCore( 'auto-update:start');
-        this.animation();
+        Fire.sendToCore( 'auto-updater:start');
+        this.playAnimation();
     },
 
     windowsCheckUpdate: function () {
-        this.animation();
+        this.playAnimation();
         Fire._JsonLoader('http://fireball-x.com/api/checkupdate?version=v'+ app.getVersion(), function (err,json) {
             this.progressAnimate = true;
             Fire.log("Checking for update!");
@@ -100,8 +106,8 @@ Polymer({
         this.ignoreDialog = event.detail.ignoreDialog;
     },
 
-    animation: function () {
-        this.playAnimate = true;
+    playAnimation: function () {
+        this.playing = true;
         this.$.logo.animate([
             { width: "45px" },
             { width: "40px" },
@@ -113,10 +119,10 @@ Polymer({
     },
 
     install: function () {
-        autoUpdater.quitAndInstall();
+        AutoUpdater.quitAndInstall();
     },
 
-    goUpdateUrl: function () {
+    goToUpdateUrl: function () {
         var shell = Remote.require('shell');
         shell.openExternal(this.updateUrl);
     },
